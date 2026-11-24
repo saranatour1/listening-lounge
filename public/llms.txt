@@ -1,0 +1,19 @@
+# Listening Lounge by Convex
+
+> A place to tune in and slow down. Listening Lounge is a shared online record room made by Convex: visitors pick a record from a crate built from the "Convex Listening Lounge I" playlist, play it on a turntable, and see who else is tuning in right now.
+
+- Site: https://impressive-frog-993.eu-west-1.convex.site/
+- Built on Convex (https://www.convex.dev): the record crate, live listener presence and the site hosting all run on Convex.
+- Playback: 30-second Apple Music previews in the browser; full songs are on Apple Music.
+
+## Listen
+
+- [Convex Listening Lounge I on Apple Music](https://music.apple.com/us/playlist/convex-listening-lounge-i/pl.u-kPjluWkz08e): 35 songs, about 2 hours 48 minutes. Artists include Zero 7, Art Blakey & The Jazz Messengers, Idris Muhammad, Vince Guaraldi, Dexter Gordon, Portishead, Sampha, Nicolas Jaar, Kelela, BADBADNOTGOOD, Frank Ocean, Sade, Floating Points & Pharoah Sanders and Stevie Wonder.
+
+## Sessions
+
+- [Listening Lounge I](https://luma.com/convex-vxua): November 19, 2026, 6–9 PM, San Francisco. Convex's first Listening Lounge for founders: coworking, dinner and drinks, then a vinyl listening session.
+
+## About Convex
+
+- [Convex](https://www.convex.dev): the reactive backend platform for web app developers.

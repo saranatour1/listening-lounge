@@ -1,0 +1,368 @@
+/* Everything inside is sized in cqw of the player's width, so it scales as one object. */
+.tt {
+  --ink: #17120f;
+  --orange: #f2621a;
+  --spring: cubic-bezier(0.3, 1.35, 0.45, 1);
+  --label: calc(67.2cqw * 0.415);
+  container-type: inline-size;
+  /* 97% of its column leaves room for the knob, which overhangs the body by ~3%. */
+  width: min(36rem, 97cqw);
+  color: var(--ink);
+  font-family: "Jost Variable", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+.tt-body {
+  position: relative;
+  width: 100cqw;
+  height: 82cqw;
+  margin-top: 25cqw; /* headroom for the open lid */
+  border-radius: 5.4cqw;
+  background: linear-gradient(172deg, #f9f6ef 0%, #efe9df 52%, #e4ddd1 100%);
+  box-shadow:
+    inset 0 0.25cqw 0.1cqw rgb(255 255 255 / 0.9),
+    inset 0 -0.5cqw 0.8cqw rgb(140 116 80 / 0.22),
+    0 0.4cqw 0.6cqw rgb(110 70 0 / 0.25),
+    0 3cqw 5cqw -1.5cqw rgb(110 70 0 / 0.45);
+  /* Long lens, eye level with the hinge: the open lid tilts toward us without ballooning. */
+  perspective: 400cqw;
+  perspective-origin: 41cqw 0;
+}
+
+.tt-hinge {
+  position: absolute;
+  z-index: 2;
+  top: -0.7cqw;
+  width: 2.4cqw;
+  height: 3.4cqw;
+  border-radius: 0.5cqw;
+  background: linear-gradient(rgb(196 193 204 / 0.95), rgb(162 159 170 / 0.95));
+  box-shadow:
+    inset 0 0 0 0.12cqw rgb(255 255 255 / 0.35),
+    0 0.2cqw 0.3cqw rgb(0 0 0 / 0.15);
+}
+
+.tt-hinge:first-of-type {
+  left: 9cqw;
+}
+
+.tt-hinge:last-of-type {
+  left: 70.6cqw;
+}
+
+.tt-well {
+  position: absolute;
+  top: calc(41cqw - 37.2cqw);
+  left: calc(41cqw - 37.2cqw);
+  width: 74.4cqw;
+  height: 74.4cqw;
+  border-radius: 50%;
+  background: radial-gradient(circle, #e6dfd3 82%, #ece6dc 100%);
+  box-shadow:
+    inset 0 0.7cqw 1.2cqw rgb(120 96 60 / 0.3),
+    inset 0 -0.3cqw 0.4cqw rgb(255 255 255 / 0.75),
+    0 0.15cqw 0 rgb(255 255 255 / 0.6);
+}
+
+.tt-platter {
+  position: absolute;
+  top: calc(41cqw - 33.6cqw);
+  left: calc(41cqw - 33.6cqw);
+  width: 67.2cqw;
+  height: 67.2cqw;
+  border-radius: 50%;
+  box-shadow:
+    0 1cqw 1.6cqw rgb(50 35 15 / 0.4),
+    0 0.2cqw 0.4cqw rgb(50 35 15 / 0.35);
+}
+
+.tt-record {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+/* Label: drawn into the canvas when HTML-in-Canvas exists, otherwise laid over it. */
+.tt-label {
+  position: relative;
+  width: var(--label);
+  height: var(--label);
+  overflow: hidden;
+  border-radius: 50%;
+  background: #3b2a22;
+}
+
+.tt-label img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Mark size and the faint art showing through it match the photo. */
+.tt-label .tt-label-symbol {
+  inset: 19.5%;
+  width: 61%;
+  height: 61%;
+  opacity: 0.9;
+}
+
+.tt-platter > .tt-label,
+.tt-holo,
+.tt-dome {
+  position: absolute;
+  inset: 0;
+  width: var(--label);
+  height: var(--label);
+  margin: auto;
+  border-radius: 50%;
+}
+
+/* Holographic foil: hues slide as the record turns (--holo is set per frame). */
+.tt-holo {
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--holo, 0deg),
+    #ff5f6d,
+    #ffc371,
+    #a8ff78,
+    #43cea2,
+    #4facfe,
+    #c471f5,
+    #ff5f6d
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.16;
+}
+
+/* Epoxy dome: light that belongs to the room, so it never rotates. */
+.tt-dome {
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 34% 22% at 35% 24%, rgb(255 255 255 / 0.6), transparent 100%),
+    radial-gradient(ellipse 26% 10% at 62% 86%, rgb(255 255 255 / 0.22), transparent 100%),
+    linear-gradient(
+      122deg,
+      transparent 34%,
+      rgb(255 236 214 / 0.18) 40%,
+      transparent 46% 58%,
+      rgb(255 236 214 / 0.12) 63%,
+      transparent 68%
+    );
+  box-shadow:
+    inset 0 0.35cqw 0.25cqw rgb(255 255 255 / 0.45),
+    inset 0 -0.8cqw 1.4cqw rgb(70 10 0 / 0.45),
+    0 0.5cqw 1.1cqw rgb(0 0 0 / 0.5);
+}
+
+/* Frosted acrylic lid, hinged along its top edge. Open, we see its underside, so the print reads mirrored. */
+.tt-lid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: 82cqw;
+  height: 82cqw;
+  place-items: center;
+  border-radius: 5.4cqw;
+  background: linear-gradient(170deg, rgb(228 225 234 / 0.26), rgb(192 189 202 / 0.34));
+  box-shadow:
+    inset 0 0 0 0.18cqw rgb(255 255 255 / 0.4),
+    inset 0 0.5cqw 0.8cqw rgb(255 255 255 / 0.25),
+    0 0.5cqw 1.2cqw rgb(60 45 25 / 0.22);
+  backdrop-filter: blur(1.3cqw) saturate(0.85);
+  cursor: pointer;
+  transform-origin: 50% 0;
+  transition: rotate 760ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tt-lid[data-open] {
+  rotate: x 104deg;
+}
+
+/* Same span on the lid as in the photo: a little over half the lid's width. */
+.tt-wordmark {
+  width: 44cqw;
+  height: auto;
+}
+
+.tt-foot {
+  position: absolute;
+  bottom: 6cqw;
+  width: 2.9cqw;
+  height: 2.9cqw;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #4a4a50, #1e1e22 70%);
+  box-shadow: 0 0 0 0.35cqw rgb(255 255 255 / 0.25);
+}
+
+.tt-foot:first-of-type {
+  left: 6.4cqw;
+}
+
+.tt-foot:last-of-type {
+  right: 6.4cqw;
+}
+
+/* Speed knob: deliberately overhangs the right edge, like the real one. */
+.tt-knob {
+  position: absolute;
+  top: calc(17.6cqw - 9.1cqw);
+  left: calc(93.6cqw - 9.1cqw);
+  width: 18.2cqw;
+  height: 18.2cqw;
+}
+
+.tt-knob-shade,
+.tt-knob-cap,
+.tt-knob-dial {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.tt-knob-shade {
+  background: rgb(120 90 50 / 0.35);
+  filter: blur(1.2cqw);
+  translate: -0.8cqw 1.4cqw;
+  transition: translate 90ms ease-out;
+}
+
+.tt-knob-cap {
+  background: radial-gradient(circle at 50% 38%, #fcfaf5 0%, #f1ece3 58%, #e3dcd0 100%);
+  box-shadow:
+    inset 0 0.35cqw 0.2cqw rgb(255 255 255 / 0.95),
+    inset 0 -0.7cqw 1cqw rgb(130 105 70 / 0.22),
+    0 0.35cqw 0 #dcd4c7,
+    0 0.6cqw 0.8cqw rgb(90 65 30 / 0.25);
+  transition: scale 90ms ease-out;
+}
+
+.tt-knob-dial {
+  transition: rotate 300ms var(--spring);
+}
+
+.tt-knob-dial i {
+  position: absolute;
+  top: 14%;
+  left: calc(50% - 1.3cqw);
+  width: 2.6cqw;
+  height: 2.6cqw;
+  border-radius: 50%;
+  background: radial-gradient(circle at 45% 40%, #ff8a3d, var(--orange) 60%, #cf4a0c);
+  box-shadow: inset 0 0.2cqw 0.3cqw rgb(120 40 0 / 0.5);
+}
+
+.tt-knob input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  clip-path: circle(50%);
+}
+
+.tt-knob:has(input:active) .tt-knob-cap {
+  scale: 0.975;
+}
+
+.tt-knob:has(input:active) .tt-knob-shade {
+  translate: -0.5cqw 1cqw;
+}
+
+.tt-knob::after {
+  position: absolute;
+  inset: -1.4cqw;
+  border: 0.4cqw solid var(--ink);
+  border-radius: 50%;
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  scale: 1.18;
+  transition:
+    opacity 140ms,
+    scale 200ms cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+
+.tt-knob:has(input:focus-visible)::after {
+  opacity: 1;
+  scale: 1;
+}
+
+.tt-btn {
+  all: unset;
+  position: absolute;
+  left: calc(93.6cqw - 3.85cqw);
+  display: grid;
+  box-sizing: border-box;
+  width: 7.7cqw;
+  height: 7.7cqw;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 35%, #fcfaf6, #efe9e0 70%, #e7e0d5);
+  box-shadow:
+    0 0 0 0.3cqw #ebe5db,
+    0 0 0 0.42cqw rgb(150 132 104 / 0.4),
+    inset 0 0.2cqw 0.1cqw rgb(255 255 255 / 0.95),
+    inset 0 -0.3cqw 0.5cqw rgb(130 105 70 / 0.2),
+    0 0.3cqw 0.5cqw 0.3cqw rgb(90 65 30 / 0.12);
+  cursor: pointer;
+  transition: translate 90ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* At phone size the buttons are ~26px; this widens what a finger can hit to 38px, just short of
+   overlapping the neighbouring button. */
+.tt-btn::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 38px);
+  height: max(100%, 38px);
+  content: "";
+  translate: -50% -50%;
+}
+
+.tt-btn:active {
+  translate: 0 0.12cqw;
+}
+
+.tt-btn:focus-visible {
+  outline: 0.4cqw solid var(--ink);
+  outline-offset: 0.9cqw;
+}
+
+.tt-btn svg {
+  width: 62%;
+  height: 62%;
+}
+
+.tt-btn-lid {
+  top: calc(35.6cqw - 3.85cqw);
+  color: #a39d90;
+}
+
+.tt-btn-play {
+  top: calc(46.8cqw - 3.85cqw);
+  color: #8b865c;
+}
+
+.tt-btn-play[aria-pressed="true"] {
+  color: var(--orange);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tt-lid,
+  .tt-knob-dial,
+  .tt-knob-cap,
+  .tt-knob-shade,
+  .tt-knob::after,
+  .tt-btn {
+    transition: none;
+  }
+}

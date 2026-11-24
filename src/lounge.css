@@ -1,0 +1,518 @@
+/* Palette: mustard stage, with paper, ink and coral from the Listening Lounge poster. */
+
+/* The page is always light; the scrollbar is a slim ink pill on paper that turns coral while dragged.
+   Colours repeat the palette below because the root scrollbar sits outside .lounge. */
+html {
+  color-scheme: light;
+  background: #dddcd8;
+}
+
+html::-webkit-scrollbar {
+  width: 12px;
+}
+
+html::-webkit-scrollbar-track {
+  background: #dddcd8;
+}
+
+html::-webkit-scrollbar-thumb {
+  border: 3px solid #dddcd8;
+  border-radius: 999px;
+  background: rgb(35 37 32 / 0.45);
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: rgb(35 37 32 / 0.7);
+}
+
+html::-webkit-scrollbar-thumb:active {
+  background: #cc4b44;
+}
+
+/* Firefox has no ::-webkit-scrollbar; Chromium would let these override the rules above. */
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-color: rgb(35 37 32 / 0.45) #dddcd8;
+    scrollbar-width: thin;
+  }
+}
+
+.lounge {
+  --mustard: #e3ad00;
+  --paper: #dddcd8;
+  --ink: #232520;
+  --brown: #3e1e10;
+  --coral: #cc4b44;
+  --coral-text: #a3322c; /* coral dark enough for small text on paper */
+  --spring: cubic-bezier(0.3, 1.35, 0.45, 1);
+  display: grid;
+  min-height: 100svh;
+  color: var(--ink);
+  font-family: "Jost Variable", sans-serif;
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+.lounge a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+.lounge a:focus-visible,
+.sleeve:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+
+.lounge-stage {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem 1rem 2.5rem;
+  overflow-x: clip;
+  background: var(--mustard);
+  container-type: inline-size;
+}
+
+/* The player stays in view while you dig through the crate. */
+@media (min-width: 64rem) {
+  .lounge {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+
+  .lounge-stage {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100svh;
+  }
+
+  /* The sticky stage is one screen tall, so the player shrinks to fit it with the lid open
+     (lid headroom + body = 107cqw of its width). */
+  .lounge-stage .tt {
+    width: min(36rem, 97cqw, (100svh - 16rem) / 1.07);
+  }
+}
+
+/* Who's here: one small record per listener, spinning while they play. */
+.listeners {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.25rem; /* reserved so the page doesn't jump when presence arrives */
+}
+
+.listeners p {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.listeners-discs {
+  display: flex;
+  margin: 0;
+  padding: 0 0 0 0.5rem;
+  list-style: none;
+}
+
+.listener,
+.listener-more {
+  display: grid;
+  width: 2.1rem;
+  height: 2.1rem;
+  margin-left: -0.5rem;
+  place-items: center;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--mustard);
+}
+
+.listener {
+  background:
+    radial-gradient(circle, var(--coral) 0 18%, #1b1e20 18.5% 21%, transparent 21.5%),
+    repeating-radial-gradient(circle, #2b3033 0 1px, #1f2326 1px 2px);
+}
+
+.listener {
+  position: relative;
+}
+
+/* Bots get a badge; the disc's tooltip names the browser either way. */
+.listener-bot {
+  position: absolute;
+  right: -0.2rem;
+  bottom: -0.2rem;
+  width: 1rem;
+  height: 1rem;
+  padding: 0.12rem;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--mustard);
+}
+
+.listener img {
+  width: 44%;
+  height: 44%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.listener[data-you] {
+  box-shadow:
+    0 0 0 2px var(--mustard),
+    0 0 0 3.5px var(--ink);
+}
+
+/* 1.8s a turn is 33⅓ rpm. */
+.listener[data-spinning] {
+  animation: listener-spin 1.8s linear infinite;
+}
+
+@keyframes listener-spin {
+  to {
+    rotate: 1turn;
+  }
+}
+
+.listener-more {
+  background: var(--ink);
+  color: var(--mustard);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.now {
+  text-align: center;
+}
+
+.now p {
+  margin: 0;
+}
+
+.now-title {
+  font-size: clamp(1.25rem, 4.4cqi, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.now-artist {
+  padding-top: 0.35em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.now-status {
+  padding-top: 0.9em;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.14em;
+  opacity: 0.75;
+  text-transform: uppercase;
+}
+
+.now-link {
+  display: inline-block;
+  margin-top: 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.lounge-paper {
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1rem, 4vw, 3.5rem) 4rem;
+  container-type: inline-size;
+}
+
+.lounge-head {
+  display: grid;
+  justify-items: center;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.lounge-title {
+  display: inline-grid;
+}
+
+/* Poster type: heavy geometric sans, set tight. */
+.lounge-title h1 {
+  margin: 0;
+  font-size: clamp(2.6rem, 11cqi, 5.5rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.95;
+}
+
+.lounge-by {
+  justify-self: end;
+  margin: 0.15em 0 0;
+  font-size: clamp(0.9rem, 2.6cqi, 1.3rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.lounge-tagline {
+  margin: 1.4em 0 0;
+  color: var(--brown);
+  font-size: clamp(1.1rem, 3.6cqi, 1.6rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+}
+
+.crate-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  margin-bottom: 2.75rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--ink);
+}
+
+.crate-head h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.crate-head p,
+.crate-note {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+.crate {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 2.75rem 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sleeve {
+  all: unset;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sleeve:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.sleeve-art {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+}
+
+/* The record inside the sleeve: it peeks out on hover and rides up when it's on the platter. */
+.sleeve-art::before {
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--coral) 0 16%, #1b1e20 16.5% 19%, transparent 19.5%),
+    repeating-radial-gradient(circle, #2b3033 0 1.5px, #1f2326 1.5px 3px);
+  content: "";
+  transition: translate 420ms var(--spring);
+}
+
+.sleeve-art img {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  object-fit: cover;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.4),
+    0 6px 14px -6px rgb(35 37 32 / 0.5);
+}
+
+@media (hover: hover) {
+  .sleeve:hover:not(:disabled) .sleeve-art::before {
+    translate: 0 -12%;
+  }
+}
+
+.sleeve[aria-pressed="true"] .sleeve-art::before {
+  translate: 0 -26%;
+}
+
+.sleeve-title,
+.sleeve-artist {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sleeve-title {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.sleeve[aria-pressed="true"] .sleeve-title {
+  color: var(--coral-text);
+}
+
+.sleeve-artist {
+  margin-top: 0.1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0.75;
+}
+
+/* The poster is the playlist's sleeve, with its record half out the side. */
+.playlist {
+  --art: clamp(8.5rem, 32cqi, 12rem);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 3rem;
+}
+
+.playlist-art {
+  flex: none;
+  width: var(--art);
+  margin-right: calc(var(--art) * 0.34);
+}
+
+.playlist-art::before {
+  translate: 34% 0;
+}
+
+.playlist p {
+  margin: 0;
+}
+
+.playlist-kicker {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.playlist h2 {
+  margin: 0.2em 0 0;
+  font-size: clamp(1.2rem, 4.6cqi, 1.75rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.playlist-meta {
+  padding-top: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.playlist .playlist-link {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.sessions {
+  margin-top: 4.5rem;
+}
+
+.sessions .crate-head {
+  margin-bottom: 1.5rem;
+}
+
+/* A ticket stub: notches punched where the perforation meets the edges. */
+.ticket {
+  --stub: 6.5rem;
+  display: grid;
+  grid-template-columns: var(--stub) 1fr;
+  max-width: 34rem;
+  border-radius: 0.6rem;
+  background: var(--mustard);
+  mask:
+    radial-gradient(circle at var(--stub) 0, #0000 0.55rem, #000 0.6rem) top / 100% 51% no-repeat,
+    radial-gradient(circle at var(--stub) 100%, #0000 0.55rem, #000 0.6rem) bottom / 100% 51%
+      no-repeat;
+}
+
+.ticket-stub {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  border-right: 2px dashed rgb(35 37 32 / 0.35);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ticket-stub b {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.ticket-body {
+  padding: 1.1rem 1.35rem 1.25rem;
+}
+
+.ticket-body h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.ticket-body p {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.ticket-body ul {
+  margin: 0.8rem 0 0;
+  padding: 0;
+  font-size: 0.8rem;
+  list-style: none;
+}
+
+.ticket-body li span {
+  display: inline-block;
+  width: 2.6rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.ticket-body a {
+  display: inline-block;
+  margin-top: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sleeve-art::before {
+    transition: none;
+  }
+
+  .listener[data-spinning] {
+    animation: none;
+  }
+}
